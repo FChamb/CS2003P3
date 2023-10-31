@@ -35,9 +35,9 @@ public class DMBClient {
             out = connection.getOutputStream();
             in = connection.getInputStream();
             Scanner scan = new Scanner(System.in);
-            string = scan.next();
+            string = scan.nextLine();
             while (!string.equals(quit)) {
-                messageSize = scan.next().getBytes();
+                messageSize = string.getBytes();
                 size = messageSize.length;
                 if (size > maxSize) {
                     System.out.println("You entered too many bytes; shortening to " + maxSize + ".");
@@ -45,7 +45,7 @@ public class DMBClient {
                 }
                 System.out.println("Sending " + size + " bytes");
                 out.write(messageSize, 0, size);
-                string = scan.next();
+                string = scan.nextLine();
             }
             System.out.print("\nClosing connection...");
             connection.close();
