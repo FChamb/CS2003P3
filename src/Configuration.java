@@ -17,8 +17,6 @@ public class Configuration {
     public String logFile;
 
     public Configuration(String propertyFile) {
-        InetAddress address;
-        String h = "hostname";
         if (propertyFile != null) {
             this.propertyFile = propertyFile;
         }
@@ -48,8 +46,8 @@ public class Configuration {
 //                    System.out.println(this.propertyFile + " maxClients: " + this.maxClients + " -> " + property);
 //                    this.maxClients = Integer.parseInt(property);
 //                }
-                if ((property = properties.getProperty("maxMessages")) != null) {
-                    System.out.println(this.propertyFile + " maxMessages: " + this.maxSize + " -> " + property);
+                if ((property = properties.getProperty("maxSize")) != null) {
+                    System.out.println(this.propertyFile + " maxSize: " + this.maxSize + " -> " + property);
                     this.maxSize = Integer.parseInt(property);
                 }
                 if ((property = properties.getProperty("logFile")) != null) {
