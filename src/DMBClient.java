@@ -1,8 +1,6 @@
 
 import java.io.*;
 import java.net.*;
-import java.text.*;
-import java.util.*;
 
 /**
   * Daily Message Board Client

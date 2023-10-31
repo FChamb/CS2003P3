@@ -13,7 +13,7 @@ public class Configuration {
     public String directoryFile;
     public String boardDirectory;
     public int maxClients;
-    public int maxMessages;
+    public int maxSize;
     public String logFile;
 
     public Configuration(String propertyFile) {
@@ -49,8 +49,8 @@ public class Configuration {
                     this.maxClients = Integer.parseInt(property);
                 }
                 if ((property = properties.getProperty("maxMessages")) != null) {
-                    System.out.println(this.propertyFile + " maxMessages: " + this.maxMessages + " -> " + property);
-                    this.maxMessages = Integer.parseInt(property);
+                    System.out.println(this.propertyFile + " maxMessages: " + this.maxSize + " -> " + property);
+                    this.maxSize = Integer.parseInt(property);
                 }
                 if ((property = properties.getProperty("logFile")) != null) {
                     System.out.println(this.propertyFile + " logFile: " + this.logFile + " -> " + property);
