@@ -11,14 +11,14 @@ import java.io.*;
 public class DirAndFile {
 
   public static void main(String[] args) {
-    if (args.length != 1) {
-      System.out.println("  usage:\n java DirAndFile <word>");
+    if (args.length != 3) {
+      System.out.println("  usage:\n java DirAndFile <word> <word> <word>");
       System.exit(0);
     }
 
-    String dirName = new String(args[0]);
-    String fileName = new String(args[1]);
-    String text = new String(args[2]);
+    String dirName = args[0];
+    String fileName = args[1];
+    String text = args[2];
 
     File dir = new File(dirName);
 
