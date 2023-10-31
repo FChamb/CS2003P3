@@ -59,6 +59,7 @@ public class DMBServer {
             System.out.println("New connection ... " + connection.getInetAddress().getHostName() + ":" + connection.getPort());
             InputStream input = connection.getInputStream();
             String userInput = new String(input.readAllBytes(), StandardCharsets.UTF_8);
+            sendToMessageBoard(userInput);
             System.out.println("Received data from client: " + userInput);
             connection.close();
             System.out.println("\n\nConnection closed");
@@ -70,5 +71,14 @@ public class DMBServer {
             System.out.println("Connection refused");
             System.exit(1);
         }
+    }
+
+    public static void sendToMessageBoard(String input) {
+        String[] args = new String[3];
+        TimeStamp time = new TimeStamp();
+        args[0] = linkToBoard + time.getSimpleDateFormat();
+        args[1] = time.getTimeDateFormat();
+        args[2] = input;
+        DirAndFile.main(args);
     }
 }
