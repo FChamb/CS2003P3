@@ -27,7 +27,7 @@ public class DMBServer {
                 server.close();
                 System.out.println("New connection ... " + connection.getInetAddress().getHostName() + ":" + connection.getPort());
             } catch (IOException e) {
-                System.out.println("Connection refused");
+                System.out.println("Connection refused2");
                 System.exit(1);
             }
         }
@@ -44,7 +44,7 @@ public class DMBServer {
             System.out.println("--> Starting Server " + server + " <--");
             server.setSoTimeout(serverTimeOut);
         } catch (IOException e) {
-            System.out.println("Connection refused");
+            System.out.println("Connection refused1");
             System.exit(1);
         }
     }
