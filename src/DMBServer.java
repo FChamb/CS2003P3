@@ -1,13 +1,18 @@
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
+import java.nio.charset.StandardCharsets;
 
 public class DMBServer {
     private static final String propertyFile = "cs2003-net2.properties";
     private static Configuration configuration;
     private static int portNumber;
     private static ServerSocket server;
+    private static Socket connection;
     private static int serverTimeOut;
+    private static String linkToBoard;
 
     /**
      * The main method has two actions. It first grabs the command line argument and ensures that there
@@ -21,18 +26,7 @@ public class DMBServer {
         setUpConfiguration();
         startServer();
         while(true) {
-            Socket connection = null;
-            try {
-                connection = server.accept();
-                System.out.println("1");
-//                server.close();
-                System.out.println("2");
-                System.out.println("New connection ... " + connection.getInetAddress().getHostName() + ":" + connection.getPort());
-                System.out.println("3");
-            } catch (IOException e) {
-                System.out.println("Connection refused2");
-                System.exit(1);
-            }
+            runProtocol();
         }
     }
 
@@ -47,7 +41,7 @@ public class DMBServer {
             System.out.println("--> Starting Server " + server + " <--");
             server.setSoTimeout(serverTimeOut);
         } catch (IOException e) {
-            System.out.println("Connection refused1");
+            System.out.println("Connection refused");
             System.exit(1);
         }
     }
@@ -56,5 +50,25 @@ public class DMBServer {
         configuration = new Configuration(propertyFile);
         portNumber = configuration.serverPort;
         serverTimeOut = configuration.serverTimeOut;
+        linkToBoard = configuration.boardDirectory;
+    }
+
+    public static void runProtocol() {
+        try {
+            connection = server.accept();
+            System.out.println("New connection ... " + connection.getInetAddress().getHostName() + ":" + connection.getPort());
+            InputStream input = connection.getInputStream();
+            String userInput = new String(input.readAllBytes(), StandardCharsets.UTF_8);
+            System.out.println("Received data from client: " + userInput);
+            connection.close();
+            System.out.println("\n\nConnection closed");
+
+        } catch (SocketTimeoutException e) {
+            System.out.println("Socket timeout");
+            System.exit(1);
+        } catch (IOException e) {
+            System.out.println("Connection refused");
+            System.exit(1);
+        }
     }
 }
