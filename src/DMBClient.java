@@ -1,6 +1,7 @@
 
 import java.io.*;
 import java.net.*;
+import java.util.Scanner;
 
 /**
   * Daily Message Board Client
@@ -10,7 +11,7 @@ import java.net.*;
   */
 public class DMBClient {
 
-  static int maxTextLen_ = 256;
+  static int maxTextLen_;
   static Configuration c_;
 
   // from configuration file
@@ -25,15 +26,16 @@ public class DMBClient {
     try {
         server = c_.serverAddress;
         port = c_.serverPort;
+        maxTextLen_ = c_.maxSize;
     }
     catch (NumberFormatException e) {
         System.out.println("can't configure port: " + e.getMessage());
     }
 
-    if (args.length != 1) { // user has not provided arguments
-      System.out.println("\n DMBClient <string>\n");
-      System.exit(0);
-    }
+//    if (args.length != 1) { // user has not provided arguments
+//      System.out.println("\n DMBClient <string>\n");
+//      System.exit(0);
+//    }
 
     try {
       Socket       connection;
@@ -44,11 +46,17 @@ public class DMBClient {
       String       quit = new String("quit");
       int          r;
 
-      connection = startClient(server, port);
+      connection = startClient();
+      if (connection == null) {
+        System.out.println("Server connection closed");
+        System.exit(0);
+      }
       tx = connection.getOutputStream();
       rx = connection.getInputStream();
 
-      buffer = args[0].getBytes();
+//      buffer = args[0].getBytes();
+      Scanner scan = new Scanner(System.in);
+      buffer = scan.next().getBytes();
       r = buffer.length;
       if (r > maxTextLen_) {
         System.out.println("++ You entered more than " + maxTextLen_ + "bytes ... truncating.");
@@ -67,32 +75,27 @@ public class DMBClient {
     }
   } // main
 
-  static Socket startClient(String hostname, int portnumber)
-  {
-    Socket connection = null;
+  static Socket startClient() {
+    Socket connection;
+    InetAddress name;
 
     try {
-      InetAddress address;
-      int         port;
+      name = InetAddress.getByName(server);
+      connection = new Socket(name, port); // make a socket
 
-      address = InetAddress.getByName(hostname);
-      port = portnumber;
-
-      connection = new Socket(address, port); // make a socket
-
-      System.out.println("++ Connecting to " + hostname + ":" + port
+      System.out.println("++ Connecting to " + name + ":" + port
       + " -> " + connection);
+      return connection;
     }
 
     catch (UnknownHostException e) {
-      System.err.println("UnknownHost Exception: " + hostname + " "
-                        + e.getMessage());
+      System.err.println("UnknownHost Exception: " + e.getMessage());
+      return null;
     }
     catch (IOException e) {
       System.err.println("IO Exception: " + e.getMessage());
+      return null;
     }
-
-    return connection;
   } // startClient
 
 } // DMBClient

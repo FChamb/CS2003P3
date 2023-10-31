@@ -7,6 +7,7 @@ public class DMBServer {
     private static Configuration configuration;
     private static int portNumber;
     private static ServerSocket server;
+    private static int serverTimeOut;
 
     /**
      * The main method has two actions. It first grabs the command line argument and ensures that there
@@ -19,27 +20,17 @@ public class DMBServer {
     public static void main(String[] args) {
         setUpConfiguration();
         startServer();
-//        try {
-//            if (args.length != 1) {
-//                throw new ArrayIndexOutOfBoundsException("\n SimpleServer <port> \n");
-//            }
-//        } catch (ArrayIndexOutOfBoundsException e) {
-//            System.out.println(e.getMessage());
-//            System.exit(1);
-//        }
-//        port = Integer.parseInt(args[0]);
-//        startServer();
-//
-//        try {
-//            Socket connection = server.accept();
-//            server.close();
-//
-//            System.out.println("New connection ... " + connection.getInetAddress().getHostName() + ":" + connection.getPort());
-//
-//        } catch (IOException e) {
-//            System.out.println("Connection refused");
-//            System.exit(1);
-//        }
+        while(true) {
+            Socket connection = null;
+            try {
+                connection = server.accept();
+                server.close();
+                System.out.println("New connection ... " + connection.getInetAddress().getHostName() + ":" + connection.getPort());
+            } catch (IOException e) {
+                System.out.println("Connection refused");
+                System.exit(1);
+            }
+        }
     }
 
     /**
@@ -51,6 +42,7 @@ public class DMBServer {
         try {
             server = new ServerSocket(portNumber);
             System.out.println("--> Starting Server " + server + " <--");
+            server.setSoTimeout(serverTimeOut);
         } catch (IOException e) {
             System.out.println("Connection refused");
             System.exit(1);
@@ -60,5 +52,6 @@ public class DMBServer {
     public static void setUpConfiguration() {
         configuration = new Configuration(propertyFile);
         portNumber = configuration.serverPort;
+        serverTimeOut = configuration.serverTimeOut;
     }
 }

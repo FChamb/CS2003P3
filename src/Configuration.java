@@ -12,7 +12,7 @@ public class Configuration {
     public int serverPort;
     public String directoryFile;
     public String boardDirectory;
-    public int maxClients;
+    public int serverTimeOut;
     public int maxSize;
     public String logFile;
 
@@ -42,10 +42,10 @@ public class Configuration {
                     System.out.println(this.propertyFile + " boardDirectory: " + this.boardDirectory + " -> " + property);
                     this.boardDirectory = new String(property);
                 }
-//                if ((property = properties.getProperty("maxClients")) != null) {
-//                    System.out.println(this.propertyFile + " maxClients: " + this.maxClients + " -> " + property);
-//                    this.maxClients = Integer.parseInt(property);
-//                }
+                if ((property = properties.getProperty("serverTimeOut")) != null) {
+                    System.out.println(this.propertyFile + " serverTimeOut: " + this.serverTimeOut + " -> " + property);
+                    this.serverTimeOut = Integer.parseInt(property);
+                }
                 if ((property = properties.getProperty("maxSize")) != null) {
                     System.out.println(this.propertyFile + " maxSize: " + this.maxSize + " -> " + property);
                     this.maxSize = Integer.parseInt(property);
