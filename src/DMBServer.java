@@ -76,7 +76,7 @@ public class DMBServer {
     public static void sendToMessageBoard(String input) {
         String[] args = new String[3];
         TimeStamp time = new TimeStamp();
-        args[0] = linkToBoard + time.getSimpleDateFormat();
+        args[0] = linkToBoard + "/" + time.getSimpleDateFormat();
         args[1] = time.getTimeDateFormat();
         args[2] = input;
         DirAndFile.main(args);
