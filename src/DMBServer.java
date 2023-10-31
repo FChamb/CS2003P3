@@ -24,8 +24,11 @@ public class DMBServer {
             Socket connection = null;
             try {
                 connection = server.accept();
-                server.close();
+                System.out.println("1");
+//                server.close();
+                System.out.println("2");
                 System.out.println("New connection ... " + connection.getInetAddress().getHostName() + ":" + connection.getPort());
+                System.out.println("3");
             } catch (IOException e) {
                 System.out.println("Connection refused2");
                 System.exit(1);
