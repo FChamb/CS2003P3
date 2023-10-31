@@ -31,7 +31,7 @@ public class TimeStamp {
         return this.date;
     }
 
-    public String getTimeDateFormat() {
+    public String getSimpleTimeDateFormat() {
         return this.timeDate;
     }
 }

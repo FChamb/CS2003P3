@@ -25,7 +25,6 @@ public class DMBClient {
             InputStream in;
             byte[] messageSize;
             String string;
-            String quit = "quit";
             int size;
             connection = startClient();
             if (connection == null) {
@@ -36,7 +35,7 @@ public class DMBClient {
             in = connection.getInputStream();
             Scanner scan = new Scanner(System.in);
             string = scan.nextLine();
-            while (!string.equals(quit)) {
+            while (true) {
                 messageSize = string.getBytes();
                 size = messageSize.length;
                 if (size > maxSize) {
@@ -47,9 +46,9 @@ public class DMBClient {
                 out.write(messageSize, 0, size);
                 string = scan.nextLine();
             }
-            System.out.print("\nClosing connection...");
-            connection.close();
-            System.out.println("...closed.");
+//            System.out.print("\nClosing connection...");
+//            connection.close();
+//            System.out.println("...closed.");
         } catch (IOException e) {
             System.err.println("IO Exception: " + e.getMessage());
       }
