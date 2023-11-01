@@ -23,14 +23,12 @@ public class DirAndFile {
     File dir = new File(dirName);
 
     if (dir.exists()) {
-      System.out.println("++ File already exists: " + dirName);
-      System.exit(0);
-    }
-
-    if (dir.mkdir()) {
+      System.out.println("++ Directory already exists: " + dirName);
+    } else {
+      dir.mkdir();
       System.out.println("++ Created directory: " + dirName);
     }
-    else {
+    if (!dir.exists()) {
       System.out.println("++ Failed to create directory: " + dirName);
       System.exit(0);
     }

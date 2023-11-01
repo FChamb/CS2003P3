@@ -15,6 +15,7 @@ public class Configuration {
     public int serverTimeOut;
     public int maxSize;
     public String logFile;
+    public String csvUsernameFile;
 
     public Configuration(String propertyFile) {
         if (propertyFile != null) {
@@ -53,6 +54,10 @@ public class Configuration {
                 if ((property = properties.getProperty("logFile")) != null) {
                     System.out.println(this.propertyFile + " logFile: " + this.logFile + " -> " + property);
                     this.logFile = new String(property);
+                }
+                if ((property = properties.getProperty("csvUsernameFile")) != null) {
+                    System.out.println(this.propertyFile + " csvUsernameFile: " + this.csvUsernameFile + " -> " + property);
+                    this.csvUsernameFile = new String(property);
                 }
 
                 p.close();

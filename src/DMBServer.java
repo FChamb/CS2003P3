@@ -59,8 +59,8 @@ public class DMBServer {
             System.out.println("New connection ... " + connection.getInetAddress().getHostName() + ":" + connection.getPort());
             InputStream input = connection.getInputStream();
             String userInput = new String(input.readAllBytes(), StandardCharsets.UTF_8);
-            sendToMessageBoard(userInput);
-            System.out.println("Received data from client: " + userInput);
+            sendToMessageBoard(userInput.substring(2));
+            System.out.println("Received data from client:\n" + userInput);
             connection.close();
             System.out.println("\n\nConnection closed");
 
