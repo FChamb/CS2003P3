@@ -14,17 +14,16 @@ public class DMBClient {
     static HashMap<String, String> usernames;
 
     public static void main(String[] args) {
-        configuration = new Configuration(propertyFile);
-        try {
-            server = configuration.serverAddress;
-            portNumber = configuration.serverPort;
-            maxSize = configuration.maxSize;
-            usernames = parseCSV();
-        }
-        catch (NumberFormatException e) {
-            System.out.println("Can't configure port number: " + e.getMessage());
-        }
+        setConfiguration();
         runProtocol();
+    }
+
+    public static void setConfiguration() {
+        configuration = new Configuration(propertyFile);
+        server = configuration.serverAddress;
+        portNumber = configuration.serverPort;
+        maxSize = configuration.maxSize;
+        usernames = parseCSV();
     }
 
     public static void runProtocol() {
@@ -32,29 +31,40 @@ public class DMBClient {
         while (messageSize == null) {
             messageSize = getUserCommand();
         }
-        int size = messageSize.length;
-        System.out.println("Sending " + size + " bytes: " + new String(messageSize, StandardCharsets.UTF_8));
+        System.out.println("Sending " + messageSize.length + " bytes: " + new String(messageSize, StandardCharsets.UTF_8));
         try {
             Socket connection = startClient();
             if (connection == null) {
                 System.out.println("Server connection closed");
                 System.exit(0);
             }
-            boolean receieved = false;
-            while (!receieved) {
-                OutputStream out = connection.getOutputStream();
-                out.write(messageSize, 0, size);
-//                System.out.println("1");
-                InputStream input = connection.getInputStream();
-//                System.out.println("2");
-                String serverInput = new String(input.readAllBytes(), StandardCharsets.UTF_8);
-                if (serverInput != null) {
-                    receieved = true;
-                }
-//                System.out.println("3");
-                System.out.println(serverInput);
+            OutputStream out = connection.getOutputStream();
+            out.write(messageSize);
+            System.out.print("\n++ Closing connection... ");
+            connection.close();
+            System.out.println("...closed.");
+            if (new String(messageSize, StandardCharsets.UTF_8).startsWith("%%fetch")) {
+                getResponse();
             }
-            System.out.print("\nClosing connection...");
+        } catch (IOException e) {
+            System.out.println("Connection refused!");
+            System.exit(1);
+        }
+    }
+
+    public static void getResponse() {
+        Socket connection = startClient();
+        if (connection == null) {
+            System.out.println("Server connection closed");
+            System.exit(0);
+        }
+        try {
+            InputStream input = connection.getInputStream();
+            System.out.println("\n++ Waiting for server response...");
+            String serverInput = new String(input.readAllBytes(), StandardCharsets.UTF_8);
+            System.out.println("++ Received response from server:");
+            System.out.println(serverInput);
+            System.out.print("\n++ Closing connection... ");
             connection.close();
             System.out.println("...closed.");
         } catch (IOException e) {
@@ -137,20 +147,17 @@ public class DMBClient {
     }
 
     public static Socket startClient() {
-        Socket connection;
+        Socket connection = null;
         InetAddress name;
         try {
             name = InetAddress.getByName(server);
             connection = new Socket(name, portNumber);
             System.out.println("++ Connecting to " + name + ":" + portNumber + " -> " + connection);
-            return connection;
-        } catch (UnknownHostException e) {
-            System.out.println("UnknownHost Exception: " + e.getMessage());
-            return null;
         } catch (IOException e) {
-            System.out.println("IO Exception: " + e.getMessage());
-            return null;
+            System.out.println("Connection refused!");
+            System.exit(1);
         }
+        return connection;
     }
 
     public static HashMap<String, String> parseCSV() {
