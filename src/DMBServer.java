@@ -98,8 +98,7 @@ public class DMBServer {
             if (directory.exists()) {
                 serverResponse = "%%messages" + date;
                 for (File message : directory.listFiles()) {
-                    System.out.println("in loop");
-                    BufferedReader read = new BufferedReader(new FileReader(directory + "/" + message));
+                    BufferedReader read = new BufferedReader(new FileReader(message));
                     serverResponse += "\n\t" + message.getName().substring(11) + " ";
                     String line = read.readLine();
                     serverResponse += line;
