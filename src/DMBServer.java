@@ -96,9 +96,9 @@ public class DMBServer {
             File directory = new File(linkToBoard + "/" + date);
             String serverResponse;
             if (directory.exists()) {
-                System.out.println("dir exists");
                 serverResponse = "%%messages" + date;
                 for (File message : directory.listFiles()) {
+                    System.out.println("in loop");
                     BufferedReader read = new BufferedReader(new FileReader(directory + "/" + message));
                     serverResponse += "\n\t" + message.getName().substring(11) + " ";
                     String line = read.readLine();
@@ -106,7 +106,6 @@ public class DMBServer {
                 }
                 serverResponse += "\n%%end";
             } else if (directory.listFiles().length == 0) {
-                System.out.println("dir dont exist");
                 serverResponse = "%%none";
             } else {
                 serverResponse = "%%error";
