@@ -46,7 +46,7 @@ public class DMBClient {
             if (message.startsWith("%%fetch")) {
                 String response;
                 System.out.println("\n++ Waiting for server response...");
-                System.out.println("++ Received response from server:");
+                System.out.println("++ Received response from server:\n");
                 while ((response = input.readLine()) != null) {
                     System.out.println(response);
                 }

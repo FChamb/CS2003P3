@@ -75,9 +75,9 @@ public class DMBServer {
             System.out.println("Socket timeout");
             System.exit(1);
         } catch (IOException e) {
-            System.out.println(e.getMessage());
-            System.out.println("Connection refused");
-            System.exit(1);
+            throw new RuntimeException(e);
+//            System.out.println("Connection refused");
+//            System.exit(1);
         }
     }
 
