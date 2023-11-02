@@ -111,7 +111,7 @@ public class DMBServer {
             }
             write.println(serverResponse);
         } catch (IOException e) {
-            System.out.println("Connection refused!");
+            System.out.println("Connection refused!---");
             System.exit(1);
         }
     }
