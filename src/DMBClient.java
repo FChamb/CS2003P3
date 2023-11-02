@@ -80,7 +80,7 @@ public class DMBClient {
                 return null;
             }
             String myUser = server.substring(0, server.indexOf("."));
-            string = myUser + string;
+            string = myUser + " " + string;
             return string.getBytes();
         }
     }
