@@ -49,13 +49,17 @@ public class DMBClient {
             } else if (string.contains("%%fetch")) {
                 String[] commands = string.split(" ");
                 String date;
-                if (commands.length != 2) {
+                if (commands.length > 2) {
+                    System.out.println("Wrong command format! <%%fetch> <YYYY-MM-DD(Optional)>");
+                    System.exit(0);
+                } else if (commands.length == 1) {
                     date = new TimeStamp().getSimpleDateFormat();
                 } else {
                     if (!commands[1].equals("^([0-9]{4}-[0-9]{2}-[0-9]{2})$")) {
                         System.out.println("Wrong date format! %%fetch <YYYY-MM-DD>");
                         System.exit(0);
                     }
+                    date = commands[1];
                 }
                 messageSize = new byte[1];
             } else {
