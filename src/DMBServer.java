@@ -57,8 +57,8 @@ public class DMBServer {
             connection = server.accept();
             server.close();
             System.out.println("New connection ... " + connection.getInetAddress().getHostName() + ":" + connection.getPort());
-            InputStream input = connection.getInputStream();
-            String userInput = new String(input.readAllBytes(), StandardCharsets.UTF_8);
+            BufferedReader input = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String userInput = input.readLine();
             System.out.println("\nReceived data from client:\n" + userInput + "\n\n");
             if (userInput.startsWith("%%from")) {
                 userInput = userInput.substring(7);
@@ -91,7 +91,7 @@ public class DMBServer {
 
     public static void fetchData(String userInput) {
         try {
-            OutputStream out = connection.getOutputStream();
+            PrintWriter write = new PrintWriter(connection.getOutputStream(), true);
             String date = userInput.substring(8);
             File directory = new File(linkToBoard + "/" + date);
             String serverResponse;
@@ -109,7 +109,7 @@ public class DMBServer {
             } else {
                 serverResponse = "%%error";
             }
-            out.write(serverResponse.getBytes());
+            write.println(serverResponse);
         } catch (IOException e) {
             System.out.println("Connection refused!");
             System.exit(1);
