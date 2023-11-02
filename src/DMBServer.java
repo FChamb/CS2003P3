@@ -75,6 +75,7 @@ public class DMBServer {
             System.out.println("Socket timeout");
             System.exit(1);
         } catch (IOException e) {
+            System.out.println(e.getMessage());
             System.out.println("Connection refused");
             System.exit(1);
         }
@@ -96,7 +97,7 @@ public class DMBServer {
             File directory = new File(linkToBoard + "/" + date);
             String serverResponse;
             if (directory.exists()) {
-                serverResponse = "%%messages" + date;
+                serverResponse = "%%messages " + date;
                 for (File message : directory.listFiles()) {
                     BufferedReader read = new BufferedReader(new FileReader(message));
                     serverResponse += "\n\t" + message.getName().substring(11) + " ";
@@ -111,8 +112,7 @@ public class DMBServer {
             }
             write.println(serverResponse);
         } catch (IOException e) {
-            System.out.println(e.getMessage());
-            System.out.println("Connection refused!---");
+            System.out.println("Connection refused!");
             System.exit(1);
         }
     }
