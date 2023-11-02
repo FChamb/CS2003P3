@@ -1,5 +1,4 @@
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
@@ -56,11 +55,19 @@ public class DMBServer {
     public static void runProtocol() {
         try {
             connection = server.accept();
+            server.close();
             System.out.println("New connection ... " + connection.getInetAddress().getHostName() + ":" + connection.getPort());
             InputStream input = connection.getInputStream();
             String userInput = new String(input.readAllBytes(), StandardCharsets.UTF_8);
-            sendToMessageBoard(userInput.substring(2));
-            System.out.println("Received data from client:\n" + userInput);
+            System.out.println("\nReceived data from client:\n" + userInput + "\n\n");
+            if (userInput.startsWith("%%from")) {
+                userInput = userInput.substring(7);
+                sendToMessageBoard(userInput);
+            } else if (userInput.startsWith("%%fetch")) {
+                fetchData(userInput);
+            } else {
+                sendToMessageBoard(userInput);
+            }
             connection.close();
             System.out.println("\n\nConnection closed");
 
@@ -80,5 +87,32 @@ public class DMBServer {
         args[1] = time.getSimpleDateFormat();
         args[2] = input;
         DirAndFile.main(args);
+    }
+
+    public static void fetchData(String userInput) {
+        try {
+            OutputStream out = connection.getOutputStream();
+            String date = userInput.substring(8);
+            File directory = new File(linkToBoard + "/" + date);
+            String serverResponse;
+            if (directory.exists()) {
+                serverResponse = "%%messages" + date;
+                for (File message : directory.listFiles()) {
+                    BufferedReader read = new BufferedReader(new FileReader(directory + "/" + message));
+                    serverResponse += "\n\t" + message.getName().substring(11) + " ";
+                    String line = read.readLine();
+                    serverResponse += line;
+                }
+                serverResponse += "\n%%end";
+            } else if (directory.listFiles().length == 0) {
+                serverResponse = "%%none";
+            } else {
+                serverResponse = "%%error";
+            }
+            out.write(serverResponse.getBytes());
+        } catch (IOException e) {
+            System.out.println("Connection refused!");
+            System.exit(1);
+        }
     }
 }
