@@ -24,9 +24,7 @@ public class DMBServer {
     public static void main(String[] args) {
         setUpConfiguration();
         startServer();
-        while(true) {
-            runProtocol();
-        }
+        runProtocol();
     }
 
     /**
@@ -75,9 +73,8 @@ public class DMBServer {
             System.out.println("Socket timeout");
             System.exit(1);
         } catch (IOException e) {
-            throw new RuntimeException(e);
-//            System.out.println("Connection refused");
-//            System.exit(1);
+            System.out.println("Connection refused");
+            System.exit(1);
         }
     }
 
