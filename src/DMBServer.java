@@ -68,9 +68,9 @@ public class DMBServer {
             } else {
                 sendToMessageBoard(userInput);
             }
+            System.out.print("\n++ Closing connection... ");
             connection.close();
-            System.out.println("\n\nConnection closed");
-
+            System.out.println("\n...closed.");
         } catch (SocketTimeoutException e) {
             System.out.println("Socket timeout");
             System.exit(1);

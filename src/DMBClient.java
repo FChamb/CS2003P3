@@ -28,25 +28,30 @@ public class DMBClient {
 
     public static void runProtocol() {
         byte[] messageSize = null;
+        String message;
         while (messageSize == null) {
             messageSize = getUserCommand();
         }
-        System.out.println("Sending " + messageSize.length + " bytes: " + new String(messageSize, StandardCharsets.UTF_8));
+        message = new String(messageSize, StandardCharsets.UTF_8);
+        System.out.println("Sending " + messageSize.length + " bytes: " + message);
         try {
             Socket connection = startClient();
             if (connection == null) {
                 System.out.println("Server connection closed");
                 System.exit(0);
             }
-            OutputStream out = connection.getOutputStream();
-            out.write(messageSize);
-            out.flush();
-            if (new String(messageSize, StandardCharsets.UTF_8).startsWith("%%fetch")) {
-                InputStream input = connection.getInputStream();
+            PrintWriter write = new PrintWriter(connection.getOutputStream(), true);
+            write.println(message);
+            BufferedReader input = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            if (message.startsWith("%%fetch")) {
+                String response;
                 System.out.println("\n++ Waiting for server response...");
-                String serverInput = new String(input.readAllBytes(), StandardCharsets.UTF_8);
+                while ((response = input.readLine()) != null) {
+                    System.out.println(response);
+                }
                 System.out.println("++ Received response from server:");
-                System.out.println(serverInput);
+
+                System.out.println("\n++ Waiting for server response...");
             }
             System.out.print("\n++ Closing connection... ");
             connection.close();
