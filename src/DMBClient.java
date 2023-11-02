@@ -40,30 +40,14 @@ public class DMBClient {
             }
             OutputStream out = connection.getOutputStream();
             out.write(messageSize);
-            System.out.print("\n++ Closing connection... ");
-            connection.close();
-            System.out.println("...closed.");
+            out.flush();
             if (new String(messageSize, StandardCharsets.UTF_8).startsWith("%%fetch")) {
-                getResponse();
+                InputStream input = connection.getInputStream();
+                System.out.println("\n++ Waiting for server response...");
+                String serverInput = new String(input.readAllBytes(), StandardCharsets.UTF_8);
+                System.out.println("++ Received response from server:");
+                System.out.println(serverInput);
             }
-        } catch (IOException e) {
-            System.out.println("Connection refused!");
-            System.exit(1);
-        }
-    }
-
-    public static void getResponse() {
-        Socket connection = startClient();
-        if (connection == null) {
-            System.out.println("Server connection closed");
-            System.exit(0);
-        }
-        try {
-            InputStream input = connection.getInputStream();
-            System.out.println("\n++ Waiting for server response...");
-            String serverInput = new String(input.readAllBytes(), StandardCharsets.UTF_8);
-            System.out.println("++ Received response from server:");
-            System.out.println(serverInput);
             System.out.print("\n++ Closing connection... ");
             connection.close();
             System.out.println("...closed.");
