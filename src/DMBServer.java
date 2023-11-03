@@ -3,13 +3,14 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.CompletableFuture;
 
 public class DMBServer {
     private static final String propertyFile = "cs2003-net2.properties";
     private static Configuration configuration;
     private static int portNumber;
     private static ServerSocket server;
-    private static Socket connection;
+    private static Queue queue;
     private static int serverTimeOut;
     private static String linkToBoard;
 
@@ -24,7 +25,33 @@ public class DMBServer {
     public static void main(String[] args) {
         setUpConfiguration();
         startServer();
-        runProtocol();
+        Thread acceptClients = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        queue.enqueue(server.accept());
+                    } catch (SocketTimeoutException e) {
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        });
+        acceptClients.start();
+        while (true) {
+            Socket connection;
+            if (!queue.isEmpty()) {
+                connection = (Socket) queue.dequeue();
+                getMessage(connection);
+            } else {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
     }
 
     /**
@@ -48,12 +75,11 @@ public class DMBServer {
         portNumber = configuration.serverPort;
         serverTimeOut = configuration.serverTimeOut;
         linkToBoard = configuration.boardDirectory;
+        queue = new Queue();
     }
 
-    public static void runProtocol() {
+    public static void getMessage(Socket connection) {
         try {
-            connection = server.accept();
-            server.close();
             System.out.println("New connection ... " + connection.getInetAddress().getHostName() + ":" + connection.getPort());
             BufferedReader input = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             String userInput = input.readLine();
@@ -62,16 +88,13 @@ public class DMBServer {
                 userInput = userInput.substring(7);
                 sendToMessageBoard(userInput);
             } else if (userInput.startsWith("%%fetch")) {
-                fetchData(userInput);
+                fetchData(userInput, connection);
             } else {
                 sendToMessageBoard(userInput);
             }
             System.out.print("\n++ Closing connection... ");
             connection.close();
             System.out.println("\n...closed.");
-        } catch (SocketTimeoutException e) {
-            System.out.println("Socket timeout");
-            System.exit(1);
         } catch (IOException e) {
             System.out.println("Connection refused");
             System.exit(1);
@@ -87,7 +110,7 @@ public class DMBServer {
         DirAndFile.main(args);
     }
 
-    public static void fetchData(String userInput) {
+    public static void fetchData(String userInput, Socket connection) {
         try {
             PrintWriter write = new PrintWriter(connection.getOutputStream(), true);
             String date = userInput.substring(8);
@@ -102,6 +125,8 @@ public class DMBServer {
                     serverResponse += line;
                 }
                 serverResponse += "\n%%end";
+            } else if (!directory.exists()) {
+                serverResponse = "%%none";
             } else if (directory.listFiles().length == 0) {
                 serverResponse = "%%none";
             } else {
