@@ -127,6 +127,7 @@ public class DMBClient {
      */
     public static String to(String string) {
         String[] commands = string.split(" ", 3);
+        String myUser = server.substring(0, server.indexOf("."));
         if (commands.length != 3) {
             System.out.println("Wrong command format! <%%to> <userName> <message>");
             return null;
@@ -143,7 +144,7 @@ public class DMBClient {
             System.out.println("You entered too many bytes! Max allowance: " + maxSize + ".");
             return null;
         }
-        return ("%%from " + username + " " + commands[2]);
+        return ("%%from " + myUser + " " + commands[2]);
     }
 
     /**
