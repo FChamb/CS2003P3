@@ -10,6 +10,12 @@ import java.io.*;
 
 public class DirAndFile {
 
+  /**
+   * The main method of this class splits the command line arguments and checks directories,
+   * files, and input. This entire class is taken from the CS2003 P3 practical. The only change
+   * is commented below.
+   * @param args command line arguments
+   */
   public static void main(String[] args) {
     if (args.length != 3) {
       System.out.println("  usage:\n java DirAndFile <word> <word> <word>");
@@ -22,6 +28,8 @@ public class DirAndFile {
 
     File dir = new File(dirName);
 
+    // This statement was changed to enable allowing the program to still run if the
+    // directory exists.
     if (dir.exists()) {
       System.out.println("++ Directory already exists: " + dirName);
     } else {

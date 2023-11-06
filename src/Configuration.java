@@ -1,6 +1,5 @@
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Properties;
 
@@ -17,6 +16,12 @@ public class Configuration {
     public String logFile;
     public String csvUsernameFile;
 
+    /**
+     * Configuration checks that the property file is not null. If it is not, a try catch loop
+     * reads through the file and parses every value to the correct value. This class is based off
+     * of the W05 exercises provided in the CS2003 Exercise class.
+     * @param propertyFile string containing the path to the property file
+     */
     public Configuration(String propertyFile) {
         if (propertyFile != null) {
             this.propertyFile = propertyFile;
@@ -29,7 +34,7 @@ public class Configuration {
                 String property;
                 if ((property = properties.getProperty("serverAddress")) != null) {
                     System.out.println(this.propertyFile + " serverAddress: " + this.serverAddress + " -> " + property);
-                    this.serverAddress = new String(property);
+                    this.serverAddress = property;
                 }
                 if ((property = properties.getProperty("serverPort")) != null) {
                     System.out.println(this.propertyFile + " serverPort: " + this.serverPort + " -> " + property);
@@ -37,11 +42,11 @@ public class Configuration {
                 }
                 if ((property = properties.getProperty("directoryFile")) != null) {
                     System.out.println(this.propertyFile + " directoryFile: " + this.directoryFile + " -> " + property);
-                    this.directoryFile = new String(property);
+                    this.directoryFile = property;
                 }
                 if ((property = properties.getProperty("boardDirectory")) != null) {
                     System.out.println(this.propertyFile + " boardDirectory: " + this.boardDirectory + " -> " + property);
-                    this.boardDirectory = new String(property);
+                    this.boardDirectory = property;
                 }
                 if ((property = properties.getProperty("serverTimeOut")) != null) {
                     System.out.println(this.propertyFile + " serverTimeOut: " + this.serverTimeOut + " -> " + property);
@@ -53,11 +58,11 @@ public class Configuration {
                 }
                 if ((property = properties.getProperty("logFile")) != null) {
                     System.out.println(this.propertyFile + " logFile: " + this.logFile + " -> " + property);
-                    this.logFile = new String(property);
+                    this.logFile = property;
                 }
                 if ((property = properties.getProperty("csvUsernameFile")) != null) {
                     System.out.println(this.propertyFile + " csvUsernameFile: " + this.csvUsernameFile + " -> " + property);
-                    this.csvUsernameFile = new String(property);
+                    this.csvUsernameFile = property;
                 }
 
                 p.close();

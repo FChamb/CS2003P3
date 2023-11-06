@@ -17,6 +17,11 @@ public class TimeStamp {
     private String date;
     private String timeDate;
 
+    /**
+     * TimeStamp is taken from the CS2003 P3 practical with some slight changes to
+     * make application use simpler. There are now two simple date formats. One for
+     * with the date and time and one for just with the date.
+     */
     public TimeStamp() {
         this.d = new Date();
         this.dateFormat = "yyyy-MM-dd_HH-mm-ss.SSS";
@@ -27,10 +32,18 @@ public class TimeStamp {
         this.timeDate = simpleDateTimeFormat.format(d);
     }
 
+    /**
+     * Getter for simple date format.
+     * @return current date
+     */
     public String getSimpleDateFormat() {
         return this.date;
     }
 
+    /**
+     * Getter for simple time dat format.
+     * @return current time date
+     */
     public String getSimpleTimeDateFormat() {
         return this.timeDate;
     }

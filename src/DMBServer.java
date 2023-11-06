@@ -2,8 +2,6 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
-import java.nio.charset.StandardCharsets;
-import java.util.concurrent.CompletableFuture;
 
 public class DMBServer {
     private static final String propertyFile = "cs2003-net2.properties";
@@ -16,7 +14,7 @@ public class DMBServer {
 
     /**
      * The main method has four main functions to begin the server program. It calls to setUpConfiguration
-     * abd startServer. This method also creates a new thread, accept clients which has a runnable with a
+     * and startServer. This method also creates a new thread, accept clients which has a runnable with a
      * while true loop to continuously try enqueueing clients to the queue. This thread is then started, and
      * another while true loop uses a conditional statement to check the queue and see if any connections have
      * been added. If there are clients in the queue, a socket is set to the first enqueued client, and passed

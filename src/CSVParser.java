@@ -3,16 +3,25 @@ import java.util.HashMap;
 
 
 public class CSVParser {
-    private final String propertyFile = "cs2003-net2.properties";
     private Configuration configuration;
     private HashMap<String, String> usernames;
     private String csvLocation;
-    public CSVParser() {
-        this.configuration = new Configuration(this.propertyFile);
+
+    /**
+     * This constructor method takes a configuration object and then
+     * sets the usernames and csvLocation to proper values.
+     * @param configuration object for the configuration of the properties file
+     */
+    public CSVParser(Configuration configuration) {
+        this.configuration = configuration;
         this.usernames = new HashMap<>();
         this.csvLocation = this.configuration.csvUsernameFile;
     }
 
+    /**
+     * Parse uses a buffered reader and while loop to grab all the data from the csv file.
+     * A string array splits the line at a "," and then each value is passed into the hashmap.
+     */
     public void parse() {
         try {
             BufferedReader read = new BufferedReader(new FileReader(this.csvLocation));
@@ -30,6 +39,10 @@ public class CSVParser {
         }
     }
 
+    /**
+     * Get usernames returns the hashmap of usernames.
+     * @return a hashmap of username and port number strings
+     */
     public HashMap<String, String> getUsernames() {
         return this.usernames;
     }
