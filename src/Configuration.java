@@ -1,3 +1,4 @@
+/* The code below was developed based on information provided by lecturers in the week 5 exercise class. */
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.UnknownHostException;
