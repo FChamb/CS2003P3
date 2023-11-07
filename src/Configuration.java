@@ -16,6 +16,7 @@ public class Configuration {
     public int maxSize;
     public String logFile;
     public String csvUsernameFile;
+    public String username;
 
     /**
      * Configuration checks that the property file is not null. If it is not, a try catch loop
@@ -64,6 +65,10 @@ public class Configuration {
                 if ((property = properties.getProperty("csvUsernameFile")) != null) {
                     System.out.println(this.propertyFile + " csvUsernameFile: " + this.csvUsernameFile + " -> " + property);
                     this.csvUsernameFile = property;
+                }
+                if ((property = properties.getProperty("username")) != null) {
+                    System.out.println(this.propertyFile + " username: " + this.username + " -> " + property);
+                    this.username = property;
                 }
 
                 p.close();

@@ -11,6 +11,7 @@ public class DMBServer {
     private static Queue queue;
     private static int serverTimeOut;
     private static String linkToBoard;
+    private static String username;
 
     /**
      * The main method has four main functions to begin the server program. It calls to setUpConfiguration
@@ -62,9 +63,10 @@ public class DMBServer {
      */
     public static void setUpConfiguration() {
         configuration = new Configuration(propertyFile);
+        username = configuration.username;
         portNumber = configuration.serverPort;
         serverTimeOut = configuration.serverTimeOut;
-        linkToBoard = configuration.boardDirectory;
+        linkToBoard = configuration.boardDirectory.replace("username", username);
         queue = new Queue();
     }
 
@@ -140,8 +142,14 @@ public class DMBServer {
     /**
      * Fetch data takes two inputs, the client provided data and the socket connection.
      * A try catch statement attempts to send a response to the client. A print writer
-     * is created with the output stream of the connection. The current date is grabbed by
-     * cutting the input provided by the client. A new file is created which determines if
+     * is created with the output stream of the connection.
+     * Then the user input is splits into the command parts. If the length
+     * of commands is greater than two, error printed for the user. Otherwise,
+     * a check sees if the user provided a date or not. If they provided a date, several
+     * conditional statements use regex and logic to ensure the proper format is provided
+     * and a month, day is not larger than valid options. If the date is not provided,
+     * a time stamp is grabbed and this is returned with the message.
+     * A new file is created which determines if
      * the directory for a given date exists. If it does, the server response string builds
      * the response by creating the first line, and using a buffered reader to add every file's
      * contents to the string with the time stamp. If the directory does not exist, or it is empty
@@ -153,9 +161,35 @@ public class DMBServer {
     public static void fetchData(String userInput, Socket connection) {
         try {
             PrintWriter write = new PrintWriter(connection.getOutputStream(), true);
-            String date = userInput.substring(8);
-            File directory = new File(linkToBoard + "/" + date);
             String serverResponse;
+            String date;
+            String[] commands = userInput.split(" ");
+            if (commands.length > 2) {
+                serverResponse = "%%error";
+                write.println(serverResponse);
+                return;
+            } else if (commands.length == 1) {
+                date = new TimeStamp().getSimpleTimeDateFormat();
+            } else {
+                if (!commands[1].matches("^([0-9]{4}-[0-9]{2}-[0-9]{2})$")) {
+                    serverResponse = "%%error";
+                    write.println(serverResponse);
+                    return;
+                }
+                int month = Integer.parseInt(commands[1].split("-")[1]);
+                int day = Integer.parseInt(commands[1].split("-")[2]);
+                if (month > 12) {
+                    serverResponse = "%%error";
+                    write.println(serverResponse);
+                    return;
+                } else if (day > 31) {
+                    serverResponse = "%%error";
+                    write.println(serverResponse);
+                    return;
+                }
+                date = commands[1];
+            }
+            File directory = new File(linkToBoard + "/" + date);
             if (directory.exists()) {
                 serverResponse = "%%messages " + date;
                 for (File message : directory.listFiles()) {

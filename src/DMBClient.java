@@ -10,6 +10,7 @@ public class DMBClient {
     static String server;
     static int portNumber;
     static HashMap<String, String> usernames;
+    static String username;
 
     /**
      * The main method has two main functions. It first calls setUpConfiguration
@@ -29,7 +30,8 @@ public class DMBClient {
      */
     public static void setUpConfiguration() {
         configuration = new Configuration(propertyFile);
-        server = configuration.serverAddress;
+        username = configuration.username;
+        server = username + configuration.serverAddress;
         portNumber = configuration.serverPort;
         maxSize = configuration.maxSize;
         usernames = parseCSV();
@@ -97,7 +99,7 @@ public class DMBClient {
             if (string.startsWith("%%to")) {
                 return to(string);
             } else if (string.startsWith("%%fetch")) {
-                return fetch(string);
+                return string;
             } else {
                 System.out.println("Invalid command! Try: <%%to> <userName> <message> or <%%fetch> <YYYY-MM-DD>");
                 return null;
@@ -107,8 +109,7 @@ public class DMBClient {
                 System.out.println("You entered too many bytes! Max allowance: " + maxSize + ".");
                 return null;
             }
-            String myUser = server.substring(0, server.indexOf("."));
-            string = myUser + " " + string;
+            string = username + " " + string;
             return string;
         }
     }
@@ -126,61 +127,24 @@ public class DMBClient {
      */
     public static String to(String string) {
         String[] commands = string.split(" ", 3);
-        String myUser = server.substring(0, server.indexOf("."));
         if (commands.length != 3) {
             System.out.println("Wrong command format! <%%to> <userName> <message>");
             return null;
         }
-        String username = commands[1].toLowerCase();
+        String user = commands[1].toLowerCase();
         if (!usernames.containsKey(username)) {
             System.out.println("Invalid Username!");
             return null;
         } else {
             portNumber = Integer.parseInt(usernames.get(username));
-            server = username + server.substring(server.indexOf("."));
+            server = server.substring(server.indexOf("."));
+            server = user + server;
         }
         if (username.length() + 1 + commands[2].length() >= maxSize) {
             System.out.println("You entered too many bytes! Max allowance: " + maxSize + ".");
             return null;
         }
-        return ("%%from " + myUser + " " + commands[2]);
-    }
-
-    /**
-     * Fetch takes the user input and splits the command into parts. If the length
-     * of commands is greater than two a message is printed for the user. Otherwise,
-     * a check sees if the user provided a date or not. If they provided a date, several
-     * conditional statements use regex and logic to ensure the proper format is provided
-     * and a month, day is not larger than valid options. If the date is not provided,
-     * a time stamp is grabbed and this is returned with the message.
-     * @param string value with the user provided input
-     * @return string value with the user provided data
-     */
-    public static String fetch(String string) {
-        String[] commands = string.split(" ");
-        String date;
-        if (commands.length > 2) {
-            System.out.println("Wrong command format! <%%fetch> <YYYY-MM-DD(Optional)>");
-            return null;
-        } else if (commands.length == 1) {
-            date = new TimeStamp().getSimpleTimeDateFormat();
-        } else {
-            if (!commands[1].matches("^([0-9]{4}-[0-9]{2}-[0-9]{2})$")) {
-                System.out.println("Wrong date format! <%%fetch> <YYYY-MM-DD>");
-                return null;
-            }
-            int month = Integer.parseInt(commands[1].split("-")[1]);
-            int day = Integer.parseInt(commands[1].split("-")[2]);
-            if (month > 12) {
-                System.out.println("Invalid month input! <%%fetch> <YYYY-MM-DD>");
-                return null;
-            } else if (day > 31) {
-                System.out.println("Invalid day input! <%%fetch> <YYYY-MM-DD>");
-                return null;
-            }
-            date = commands[1];
-        }
-        return ("%%fetch " + date);
+        return ("%%from " + username + " " + commands[2]);
     }
 
     /**
