@@ -190,7 +190,9 @@ public class DMBServer {
                 date = commands[1];
             }
             File directory = new File(linkToBoard + "/" + date);
-            if (directory.exists()) {
+            if (directory.listFiles().length == 0) {
+                serverResponse = "%%none";
+            } else if (directory.exists()) {
                 serverResponse = "%%messages " + date;
                 for (File message : directory.listFiles()) {
                     BufferedReader read = new BufferedReader(new FileReader(message));
@@ -200,8 +202,6 @@ public class DMBServer {
                 }
                 serverResponse += "\n%%end";
             } else if (!directory.exists()) {
-                serverResponse = "%%none";
-            } else if (directory.listFiles().length == 0) {
                 serverResponse = "%%none";
             } else {
                 serverResponse = "%%error";
