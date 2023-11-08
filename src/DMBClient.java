@@ -132,7 +132,7 @@ public class DMBClient {
             return null;
         }
         String user = commands[1].toLowerCase();
-        if (!usernames.containsKey(username)) {
+        if (!usernames.containsKey(user)) {
             System.out.println("Invalid Username!");
             return null;
         } else {
